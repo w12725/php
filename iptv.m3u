@@ -110,13 +110,15 @@ http://[2409:8087:2001:20:2800:0:df6e:eb0b]/wh7f454c46tw993550557_162751766/ott.
 #EXTINF:-1 tvg-id="" tvg-name="云南卫视" tvg-logo="https://iptv.w12725.top/logo/云南卫视.png" group-title="IPTV",云南卫视
 http://[2409:8087:7000:20:1000::22]:6060/yinhe/2/ch00000090990000001046/index.m3u8?virtualDomain=yinhe.live_hls.zte.com
 #EXTINF:-1 tvg-id="" tvg-name="卡酷少儿" tvg-logo="https://iptv.w12725.top/logo/卡酷少儿.png" group-title="IPTV",卡酷少儿
-http://[2409:8087:74F1:0021::0008]:80/PLTV/88888888/224/3221225643/1.m3u8
+http://[2409:8087:1a01:df::7005]:80/ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225654/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="哈哈炫动" tvg-logo="https://iptv.w12725.top/logo/哈哈炫动.png" group-title="IPTV",哈哈炫动
-http://[2409:8087:74F1:0021::0008]:80/PLTV/88888888/224/3221226618/1.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="动漫秀场" tvg-logo="https://iptv.w12725.top/logo/SITV动漫秀场.png" group-title="IPTV",动漫秀场
-http://[2409:8087:74F1:0021::0008]:80/PLTV/88888888/224/3221226197/1.m3u8
+http://[2409:8087:1a01:df::7005]:80/ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225657/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="浙江少儿" tvg-logo="https://cdn.jsdelivr.net/gh/wanglindl/TVlogo@main/img/Zhejiang6.png" group-title="IPTV",浙江少儿
+https://ali-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="金鹰卡通" tvg-logo="https://iptv.w12725.top/logo/金鹰卡通.png" group-title="IPTV",金鹰卡通
 http://[2409:8087:7000:20:1000::22]:6060/yinhe/2/ch00000090990000001067/index.m3u8?virtualDomain=yinhe.live_hls.zte.com
+#EXTINF:-1 tvg-id="" tvg-name="黑莓动画" tvg-logo="https://cdn.jsdelivr.net/gh/wanglindl/TVlogo@main/img/hmdh.png" group-title="IPTV",黑莓动画
+http://[2409:8087:1a01:df::7005]/ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225662/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="动作电影" tvg-logo="https://iptv.w12725.top/logo/CHC动作电影.png" group-title="IPTV",动作电影
 http://[2409:8087:7000:20:1000::22]:6060/yinhe/2/ch00000090990000002055/index.m3u8?virtualDomain=yinhe.live_hls.zte.com
 #EXTINF:-1 tvg-id="" tvg-name="家庭影院" tvg-logo="https://iptv.w12725.top/logo/CHC家庭影院.png" group-title="IPTV",家庭影院
