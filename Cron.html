@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron表达式生成器</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e1e4e8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .config-section, .result-section {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--primary-color);
+        }
+        
+        .time-option {
+            margin-bottom: 20px;
+        }
+        
+        .time-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .option-btn {
+            padding: 8px 15px;
+            background-color: #f1f1f1;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .option-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .custom-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .presets {
+            margin-top: 30px;
+        }
+        
+        .preset-item {
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .preset-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        .result-box {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            font-size: 18px;
+            text-align: center;
+            word-break: break-all;
+        }
+        
+        .next-execution {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .copy-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 15px;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .explanation {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .explanation h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .explanation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .explanation-table th, .explanation-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .explanation-table th {
+            background-color: #e9ecef;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px 0;
+            color: #666;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cron表达式生成器</h1>
+            <p class="description">通过可视化界面轻松创建Cron表达式，用于定时任务调度。选择时间参数或使用预设选项，实时生成表达式。</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="config-section">
+                <h2 class="section-title">时间配置</h2>
+                
+                <div class="time-option">
+                    <label class="time-label">分钟</label>
+                    <div class="option-group">
+                        <button class="option-btn active" data-field="minute" data-value="*">每分钟</button>
+                        <button class="option-btn" data-field="minute" data-value="0">0分</button>
+                        <button class="option-btn" data-field="minute" data-value="30">30分</button>
+                        <button class="option-btn" data-field="minute" data-value="custom">自定义</button>
+                    </div>
+                    <input type="text" class="custom-input" id="minute-custom" placeholder="例如: 0,15,30,45" style="display: none;">
+                </div>
+                
+                <div class="time-option">
+                    <label class="time-label">小时</label>
+                    <div class="option-group">
+                        <button class="option-btn active" data-field="hour" data-value="*">每小时</button>
+                        <button class="option-btn" data-field="hour" data-value="0">0点</button>
+                        <button class="option-btn" data-field="hour" data-value="12">12点</button>
+                        <button class="option-btn" data-field="hour" data-value="custom">自定义</button>
+                    </div>
+                    <input type="text" class="custom-input" id="hour-custom" placeholder="例如: 0,6,12,18" style="display: none;">
+                </div>
+                
+                <div class="time-option">
+                    <label class="time-label">日期</label>
+                    <div class="option-group">
+                        <button class="option-btn active" data-field="day" data-value="*">每天</button>
+                        <button class="option-btn" data-field="day" data-value="1">1号</button>
+                        <button class="option-btn" data-field="day" data-value="15">15号</button>
+                        <button class="option-btn" data-field="day" data-value="custom">自定义</button>
+                    </div>
+                    <input type="text" class="custom-input" id="day-custom" placeholder="例如: 1,15" style="display: none;">
+                </div>
+                
+                <div class="time-option">
+                    <label class="time-label">月份</label>
+                    <div class="option-group">
+                        <button class="option-btn active" data-field="month" data-value="*">每月</button>
+                        <button class="option-btn" data-field="month" data-value="1">1月</button>
+                        <button class="option-btn" data-field="month" data-value="6">6月</button>
+                        <button class="option-btn" data-field="month" data-value="12">12月</button>
+                        <button class="option-btn" data-field="month" data-value="custom">自定义</button>
+                    </div>
+                    <input type="text" class="custom-input" id="month-custom" placeholder="例如: 1,4,7,10" style="display: none;">
+                </div>
+                
+                <div class="time-option">
+                    <label class="time-label">星期</label>
+                    <div class="option-group">
+                        <button class="option-btn active" data-field="weekday" data-value="*">每天</button>
+                        <button class="option-btn" data-field="weekday" data-value="1-5">工作日</button>
+                        <button class="option-btn" data-field="weekday" data-value="6,0">周末</button>
+                        <button class="option-btn" data-field="weekday" data-value="custom">自定义</button>
+                    </div>
+                    <input type="text" class="custom-input" id="weekday-custom" placeholder="例如: 1,3,5" style="display: none;">
+                </div>
+                
+                <div class="presets">
+                    <h3 class="section-title">预设选项</h3>
+                    <div class="preset-item" data-preset="0 0 * * *">每天午夜 (0 0 * * *)</div>
+                    <div class="preset-item" data-preset="0 9 * * 1-5">工作日早上9点 (0 9 * * 1-5)</div>
+                    <div class="preset-item" data-preset="0 0 1 * *">每月1号午夜 (0 0 1 * *)</div>
+                    <div class="preset-item" data-preset="0 12 * * 0">每周日中午12点 (0 12 * * 0)</div>
+                    <div class="preset-item" data-preset="*/5 * * * *">每5分钟 (*/5 * * * *)</div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2 class="section-title">生成的Cron表达式</h2>
+                
+                <div class="result-box" id="cron-expression">
+                    * * * * *
+                </div>
+                
+                <button class="copy-btn" id="copy-btn">复制表达式</button>
+                
+                <div class="next-execution">
+                    <h3>下一次执行时间</h3>
+                    <p id="next-execution-time">计算中...</p>
+                </div>
+                
+                <div class="explanation">
+                    <h3>Cron表达式说明</h3>
+                    <p>Cron表达式由5个字段组成，分别表示：分钟、小时、日期、月份、星期。</p>
+                    
+                    <table class="explanation-table">
+                        <thead>
+                            <tr>
+                                <th>字段</th>
+                                <th>允许值</th>
+                                <th>特殊字符</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>分钟</td>
+                                <td>0-59</td>
+                                <td>, - * /</td>
+                            </tr>
+                            <tr>
+                                <td>小时</td>
+                                <td>0-23</td>
+                                <td>, - * /</td>
+                            </tr>
+                            <tr>
+                                <td>日期</td>
+                                <td>1-31</td>
+                                <td>, - * ? / L W</td>
+                            </tr>
+                            <tr>
+                                <td>月份</td>
+                                <td>1-12 或 JAN-DEC</td>
+                                <td>, - * /</td>
+                            </tr>
+                            <tr>
+                                <td>星期</td>
+                                <td>0-6 或 SUN-SAT</td>
+                                <td>, - * ? / L #</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Cron表达式生成器 &copy;BLOG 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // 初始化配置
+        const config = {
+            minute: '*',
+            hour: '*',
+            day: '*',
+            month: '*',
+            weekday: '*'
+        };
+        
+        // DOM元素
+        const cronExpressionEl = document.getElementById('cron-expression');
+        const copyBtn = document.getElementById('copy-btn');
+        const nextExecutionEl = document.getElementById('next-execution-time');
+        
+        // 更新Cron表达式
+        function updateCronExpression() {
+            const expression = `${config.minute} ${config.hour} ${config.day} ${config.month} ${config.weekday}`;
+            cronExpressionEl.textContent = expression;
+            calculateNextExecution(expression);
+        }
+        
+        // 计算下一次执行时间
+        function calculateNextExecution(expression) {
+            // 这里简化处理，实际应用中应该使用cron解析库
+            const now = new Date();
+            let nextTime = new Date(now);
+            
+            // 简单模拟逻辑 - 实际应该使用cron解析库
+            if (expression === '* * * * *') {
+                nextTime.setMinutes(now.getMinutes() + 1);
+            } else if (expression === '0 0 * * *') {
+                nextTime.setDate(now.getDate() + 1);
+                nextTime.setHours(0, 0, 0, 0);
+            } else if (expression === '0 9 * * 1-5') {
+                const day = now.getDay();
+                if (day >= 1 && day <= 5 && now.getHours() < 9) {
+                    nextTime.setHours(9, 0, 0, 0);
+                } else {
+                    let daysToAdd = 1;
+                    if (day === 5) daysToAdd = 3; // 周五到周一
+                    else if (day === 6) daysToAdd = 2; // 周六到周一
+                    nextTime.setDate(now.getDate() + daysToAdd);
+                    nextTime.setHours(9, 0, 0, 0);
+                }
+            } else {
+                // 默认处理：假设每分钟执行
+                nextTime.setMinutes(now.getMinutes() + 1);
+            }
+            
+            nextExecutionEl.textContent = nextTime.toLocaleString();
+        }
+        
+        // 处理选项按钮点击
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const field = this.dataset.field;
+                const value = this.dataset.value;
+                
+                // 更新活动按钮状态
+                this.parentElement.querySelectorAll('.option-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 显示/隐藏自定义输入框
+                const customInput = document.getElementById(`${field}-custom`);
+                if (value === 'custom') {
+                    customInput.style.display = 'block';
+                    config[field] = customInput.value || '*';
+                } else {
+                    customInput.style.display = 'none';
+                    config[field] = value;
+                }
+                
+                updateCronExpression();
+            });
+        });
+        
+        // 处理自定义输入
+        document.querySelectorAll('.custom-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const field = this.id.split('-')[0];
+                config[field] = this.value || '*';
+                updateCronExpression();
+            });
+        });
+        
+        // 处理预设选项
+        document.querySelectorAll('.preset-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const preset = this.dataset.preset;
+                const parts = preset.split(' ');
+                
+                // 更新配置
+                config.minute = parts[0];
+                config.hour = parts[1];
+                config.day = parts[2];
+                config.month = parts[3];
+                config.weekday = parts[4];
+                
+                // 更新UI
+                updateOptionButtons('minute', parts[0]);
+                updateOptionButtons('hour', parts[1]);
+                updateOptionButtons('day', parts[2]);
+                updateOptionButtons('month', parts[3]);
+                updateOptionButtons('weekday', parts[4]);
+                
+                updateCronExpression();
+            });
+        });
+        
+        // 更新选项按钮状态
+        function updateOptionButtons(field, value) {
+            const buttons = document.querySelectorAll(`[data-field="${field}"]`);
+            let foundMatch = false;
+            
+            buttons.forEach(btn => {
+                if (btn.dataset.value === value) {
+                    btn.classList.add('active');
+                    foundMatch = true;
+                    
+                    // 显示/隐藏自定义输入框
+                    const customInput = document.getElementById(`${field}-custom`);
+                    if (value === 'custom') {
+                        customInput.style.display = 'block';
+                    } else {
+                        customInput.style.display = 'none';
+                    }
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // 如果没有匹配的预设按钮，使用自定义
+            if (!foundMatch) {
+                const customBtn = document.querySelector(`[data-field="${field}"][data-value="custom"]`);
+                const customInput = document.getElementById(`${field}-custom`);
+                
+                if (customBtn) {
+                    customBtn.classList.add('active');
+                    customInput.style.display = 'block';
+                    customInput.value = value;
+                }
+            }
+        }
+        
+        // 复制功能
+        copyBtn.addEventListener('click', function() {
+            const expression = cronExpressionEl.textContent;
+            navigator.clipboard.writeText(expression).then(() => {
+                const originalText = this.textContent;
+                this.textContent = '已复制!';
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 2000);
+            });
+        });
+        
+        // 初始化
+        updateCronExpression();
+    </script>
+</body>
+</html>
